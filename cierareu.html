@@ -17,5 +17,164 @@
 <body>
  <h1>Hello, World!</h1>
  <p>This is my first GitHub Pages website.</p>
+
+Abstract <br><br>
+The Nancy Grace Roman Space Telescope will use a coronagraph to block the glare of stars so
+scientists can image orbiting planets that would otherwise be hidden. In preparation for this, we
+examine potential reference stars that appear to be suitable candidates for calibrating the telescope.
+We do so using the data of stars acquired through the Gemini Observatory Archive at NSF NOIRLab
+and processed using DRAGONS (Data Reduction for Astronomy from Gemini Observatory North
+and South). One such star is Alpha Cephei, the current focus of my research. Alpha Cephei is the
+brightest star in the Cepheus constellation, making it one ideal target for calibrating the Roman
+Space Telescope - provided it can be verified that it is not a part of a binary star system. We use
+data reduction techniques to examine these reference stars and determine if they are part of a binary
+system, as well as our degree of certainty in the result. Should we come to the conclusion that a star
+is suitable for observation, then it may be added to the list of vetted targets for the Roman Space
+Telescope. The approved stars will later be used to calibrate the telescope for accurate observations.<br><br>
+
+Introduction <br><br>
+
+Exoplanets, planets that exist outside of our solar system, are often found orbiting stars. However, imaging these
+planets can be challenging as the glare of these bright stars makes it difficult to see what is nearby. That glare can be
+reduced by a device called a coronagraph, one of which will be equipped on the Nancy Grace Roman Space Telescope.
+Unlike a traditional coronagraph that uses an opaque disk to completely block the light of the star, the coronagraph
+aboard the Roman Space Telescope is designed to create destructive interference with the light of the star (V. P.
+Bailey et al. 2023). This destructive interference creates a dark hole for the telescope to image, reducing the glare
+and allowing light from orbiting planets to be seen. Deformable mirrors are used to correct distortions that may be
+caused as a result of such interference (V. P. Bailey et al. 2023). The coronagraph also uses a series of masks in order
+to promote starlight suppression. Due to the deformable mirrors, masks, and other technological advancements that
+make up the Roman Space Telescope coronograph, it is projected to have detection limits that are several orders of
+magnitude more powerful than any other space-flown coronagraph (V. P. Bailey et al. 2023). <br><br>
+
+The enhanced sensitivity of the coronagraph makes it a very powerful instrument, but it also makes it more susceptible
+to noise from outside light sources. Because of this, it is imperative that the telescope remain calibrated as it makes
+observations. Throughout Roman’s multiple-day exposures, stellar noise must be corrected. This can be done by
+periodically slewing to a reference star, recalibrating the telescope, and slewing back to the target star (L. Pogorelyuk
+et al. 2022). As a result, the reference stars being used for this calibration must not be binary stars. The presence of a
+companion star causes additional light in the dark hole, interfering with the calibration (S. G. Wolff et al. 2024). Thus,
+reference star vetting is necessary to ensure each reference target is a single star and not part of a binary system. In
+order to compile an accurate and deep dataset for each of these reference stars, one must use the data from multiple
+instruments in order to optimize the likelihood of finding a potential companion star. The Gemini Observatory’s NIRI
+is one such instrument. <br><br>
+
+We utilize data reduction techniques to clean images of stars taken by the NIRI that have yet to be analyzed. Alpha
+Cephei is one example of a NIRI observed star that has the potential to be a reference star. So, we go through the
+process of data reduction to ensure that Alpha Cephei is not a binary star and could be a suitable reference star. <br><br>
+
+Methods <br><br>
+
+Our data reduction process can be broken down into three main steps: (i) baseline data processing, (ii) psfsubtraction, and (iii) certainty analysis. Baseline data processing involves processing the raw images taken by the
+NIRI to correct for any manufacturing defects in the telescope that may affect the way an image looks. For the NIRI
+data, we use the DRAGONS software to complete this step (K. Labrie et al. 2023; C. Simpson et al. 2024). <br><br>
+
+As shown in Figure 1, we use dark-frame subtraction and flat-fielding to make these corrections. Dark-frame
+subtraction involves images that were taken by the telescope with the lens covered, or darks. The dark frames are
+then combined into a ‘master dark’ that, once subtracted from the science frames, correct for thermal noise created
+by electrons. Flat-fielding is a technique that uses images that were taken by the telescope as it was illuminated by
+a uniform light source, or flats. These flat frames are then combined into a ‘master flat’ that, once removed from the
+science frames, corrects for variation in the sensitivity of the pixels in the telescope. So, once the first step is complete,
+we are left with clean science images that show a more accurate picture of what the star actually looks like.<br><br>
+
+<img src="https://Isabel-Lockhart.github.io/Projects/images/ds9_20_all.png" alt="Figure 1. Alpha Cephei: Raw science image (upper left), post dark-subtraction and flat fielding (upper right), master flat
+(bottom left), and master dark (bottom right)"><br>
+Figure 1. Alpha Cephei: Raw science image (upper left), post dark-subtraction and flat fielding (upper right), master flat
+(bottom left), and master dark (bottom right)<br><br>
+
+The second step, psf-subtraction, involves reducing the glare of the stars light on the telescope in order to better
+see potential planets nearby. First, there is a 3 stage pre-processing portion: (i) create a 3-D image cube, (ii) extract
+parallactic angles, and (iii) find the center of the star in each image. A 3-D image cube (x,y,time) is created with
+all of the science frames so we can see how to star changes throughout time. Then, the parallactic angles of each of
+the images are extracted so that we can correct for the motion of the sky. Finally, to find the center of the star in
+each image we use the intersections of the glare to work around the overexposed centers of the images. Once these
+pre-processing steps are complete, the images are ready for psf-subtraction to remove the glare. Our PSF subtraction
+is done through a pyKlip pipeline (J. J. Wang et al. 2015) that takes the three pre-processing outputs as inputs,
+ultimately resulting in one combined image called a ‘residual map’ that has aligned all the science images and removed
+the glare of the star on the telescope. This stage is crucial for figuring out whether a star is binary or not.<br><br>
+
+The final step, certainty analysis, allows us to examine the degree to which we are certain a star is not a part of a
+binary system, or rather allows us to ask how bright a companion star would have to be for us to be able to identify
+it. There are multiple aspects to this, but injecting synthetic planets and creating a contrast curve are the two main
+parts. First, we inject synthetic planets to determine how much signal has been lost through data reduction. We
+do this injection before it goes through the PSF Subtraction pipeline. Then, we run this injected image through the
+pipeline in order to see how much of the synthetic planet remains visible post-PSF Subtraction. Next, we measure
+the fluxes of the injected synthetic planets and use those values to calibrate a contrast curve. A contrast curve lets
+us examine the light of the star as a function of separation. By doing this, we can learn about the sensitivity in our
+images as well as what we could and could not have detected.<br><br>
+
+<img src="https://Isabel-Lockhart.github.io/Projects/images/res_maps_both.png" alt="Figure 2. Alpha Cephei Residual Map: Post-Psf processing with glare removed (Left), Post-Psf processing with injected planets
+(Right)."><br>
+Figure 2. Alpha Cephei Residual Map: Post-Psf processing with glare removed (Left), Post-Psf processing with injected planets
+(Right).<br><br>
+
+If we are able to successfully complete the full reduction process without finding a companion star, then Alpha
+Cephei could be added to the final list of reference stars that will be used to calibrate Roman. However, if we find
+that Alpha Cephei has a companion star, then it will be removed from the list of potential reference stars. Regardless,
+once a thorough analysis has been completed for Alpha Cephei, the Roman Space Telescope will be one step closer to
+being ready for observations. <br><br>
+
+Results<br><br>
+
+As this data and our outputs require further refinement, results are preliminary. Figure 2 (Left) shows the current
+state of Alpha Cephei’s residual map. Figure 2 (Right) shows Alpha Cephei’s residual map after the data was injected
+with 20 synthetic planets at separations of 85, 105, 125, 145, 165, and 205 pixels. Additionally, each separation has
+been injected at a position angle of 0, 90, 180, and 270 degrees. The innermost eight planets have been injected at
+brighter fluxes in order to account for the increased noise level as they get nearer to the center of the image. Figure 3
+shows the contrast curve for Alpha Cephei, created using the residual map and calibrated using the flux information
+from the injected planets.<br><br>
+
+<img src="https://Isabel-Lockhart.github.io/Projects/images/contrast_curve.png" alt="Figure 3. Contrast Curve for Alpha Cephei’s residual map, calibrated."><br>
+Figure 3. Contrast Curve for Alpha Cephei’s residual map, calibrated. <br><br>
+
+Discussion and Conclusion<br><br>
+
+As we analyze Alpha Cephei’s residual map in Figure 2 (Left), we have yet to find signs of a companion star in the
+NIRI data. We are also seeing artifacts in the residual map, believed to be due to bad pixels the pre-PSF Subtracted
+images. We hope to lessen the effects of bad pixels in the near future. Moreover, we hope to improve the star centering
+that occurs during PSF Subtraction. Finding more accurate centers will allow for a cleaner PSF Subtracted residual
+map.<br><br>
+
+The contrast curve for Alpha Cephei, Figure 3, currently has more peaks than we would expect to see, likely because
+of the amount of bad pixels in the pre-Psf Subtracted data. Moving forward we would like to mask these bad pixels
+in the hopes of creating a cleaner residual map and, therefore, a more accurate contrast curve. The increased level
+of injections as the planets get closer to the center of the image has helped to combat sudden jumps in the contrast
+curve due that were caused by how quickly the noise level changes moving outward from the center of the image.<br><br>
+
+Taking all of this into account, we have yet to detect any companions around Alpha Cephei. However, we would
+like to make multiple improvements in the near future to reach a more concrete conclusion about our certainty level
+in this finding. <br><br>
+
+Acknowledgements<br><br>
+I would like to thank Alan Medina for his work on this project, as well as the BOBA research group for their support. A
+special thank you to Dr. Jason Wang for his support and guidance. This material is based upon work supported by the
+National Science Foundation (NSF) under Grant Numbers AST-2149425 and AST-2446392. Any opinions, findings,
+and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily
+reflect the views of the NSF. Based on observations obtained at the international Gemini Observatory, a program of
+NSF NOIRLab, which is managed by the Association of Universities for Research in Astronomy (AURA) under a
+cooperative agreement with the U.S. National Science Foundation on behalf of the Gemini Observatory partnership:
+the U.S. National Science Foundation (United States), National Research Council (Canada), Agencia Nacional de
+Investigaci´on y Desarrollo (Chile), Ministerio de Ciencia, Tecnolog´ıa e Innovaci´on (Argentina), Minist´erio da Ciˆencia,
+Tecnologia, Inova¸c˜oes e Comunica¸c˜oes (Brazil), and Korea Astronomy and Space Science Institute (Republic of Korea).<br><br>
+
+References<br><br>
+
+Bailey, V. P., Bendek, E., Monacelli, B., et al. 2023, Nancy
+Grace Roman Space Telescope Coronagraph Instrument
+Overview and Status, https://arxiv.org/abs/2309.08672 <br>
+Labrie, K., Simpson, C., Cardenes, R., et al. 2023, Research
+Notes of the American Astronomical Society, 7, 214,
+doi: 10.3847/2515-5172/ad0044 <br>
+Pogorelyuk, L., Krist, J., Nemati, B., et al. 2022, Journal of
+Astronomical Telescopes, Instruments, and Systems, 8,
+019002, doi: 10.1117/1.JATIS.8.1.019002 <br>
+Simpson, C., Labrie, K., Teal, D., et al. 2024, DRAGONS,
+3.2.1 Zenodo, doi: 10.5281/zenodo.13274573 <br>
+Wang, J. J., Ruffio, J.-B., De Rosa, R. J., et al. 2015,
+pyKLIP: PSF Subtraction for Exoplanets and Disks,,
+Astrophysics Source Code Library, record ascl:1506.001<br>
+Wolff, S. G., Wang, J., Stapelfeldt, K., et al. 2024, in Space
+Telescopes and Instrumentation 2024: Optical, Infrared,
+and Millimeter Wave, ed. L. E. Coyle, M. D. Perrin, &
+S. Matsuura (SPIE), 127, doi: 10.1117/12.3020205
+ 
 </body>
 </html>
